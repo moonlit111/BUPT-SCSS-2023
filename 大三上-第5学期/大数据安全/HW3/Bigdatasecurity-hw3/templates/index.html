@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIDO2 用户管理系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 FIDO2 用户管理系统</h1>
+            <p>安全的无密码认证解决方案</p>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <h2>欢迎使用</h2>
+                <p>这是一个基于 FIDO2 协议的安全用户管理系统，支持生物识别和硬件密钥认证。</p>
+            </div>
+
+            <div class="button-group">
+                <a href="{{ url_for('register') }}" class="btn btn-primary">
+                    <span class="icon">📝</span> 注册新账户
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-secondary">
+                    <span class="icon">🔓</span> 登录
+                </a>
+            </div>
+
+            <div class="features">
+                <h3>主要特性</h3>
+                <ul>
+                    <li>✅ FIDO2 无密码认证</li>
+                    <li>✅ 生物识别支持（指纹、面部识别）</li>
+                    <li>✅ 硬件密钥支持</li>
+                    <li>✅ 高安全性</li>
+                    <li>✅ 用户友好的界面</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

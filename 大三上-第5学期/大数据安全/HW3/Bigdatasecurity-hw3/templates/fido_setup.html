@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIDO2 设置 - FIDO2 用户管理系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 设置 FIDO2 认证</h1>
+            <p>请按照以下步骤设置您的安全密钥或生物识别</p>
+        </div>
+
+        <div class="form-container">
+            <div class="setup-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>准备您的设备</h3>
+                        <p>确保您的生物识别设备或硬件密钥已连接</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>开始注册</h3>
+                        <p>点击下方按钮开始 FIDO2 注册流程</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>完成认证</h3>
+                        <p>按照设备提示完成生物识别或密钥验证</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="status" class="status-message"></div>
+
+            <button id="registerBtn" class="btn btn-primary btn-block">
+                开始 FIDO2 注册
+            </button>
+
+            <div class="form-footer">
+                <p><a href="{{ url_for('index') }}">返回首页</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='fido.js') }}"></script>
+    <script>
+        const username = "{{ username }}";
+
+        // 标准 Base64 字符串转 ArrayBuffer
+        function base64ToArrayBuffer(base64String) {
+            try {
+                // 处理 URL-safe Base64（如果需要）
+                let base64 = base64String.replace(/-/g, '+').replace(/_/g, '/');
+
+                // 正确处理填充
+                const padding = base64.length % 4;
+                if (padding) {
+                    base64 += '='.repeat(4 - padding);
+                }
+
+                console.log('Converting Base64:', base64String, '→', base64);
+
+                const binaryString = atob(base64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return bytes.buffer;
+            } catch (e) {
+                console.error('Base64 decode error:', e, 'Input:', base64String);
+                throw new Error('Failed to decode Base64: ' + e.message);
+            }
+        }
+
+        // ArrayBuffer 转标准 Base64 字符串
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        }
+
+        // 处理 WebAuthn 选项，将 Base64 字符串转换为 ArrayBuffer
+        function processCreationOptions(options) {
+            const processed = JSON.parse(JSON.stringify(options));
+
+            // 转换 challenge
+            if (processed.publicKey.challenge) {
+                processed.publicKey.challenge = base64ToArrayBuffer(processed.publicKey.challenge);
+            }
+
+            // 转换 user.id
+            if (processed.publicKey.user && processed.publicKey.user.id) {
+                processed.publicKey.user.id = base64ToArrayBuffer(processed.publicKey.user.id);
+            }
+
+            return processed;
+        }
+
+        // 处理认证选项
+        function processGetOptions(options) {
+            const processed = JSON.parse(JSON.stringify(options));
+
+            // 转换 challenge
+            if (processed.publicKey.challenge) {
+                processed.publicKey.challenge = base64ToArrayBuffer(processed.publicKey.challenge);
+            }
+
+            // 转换 allowCredentials
+            if (processed.publicKey.allowCredentials) {
+                processed.publicKey.allowCredentials = processed.publicKey.allowCredentials.map(cred => ({
+                    type: cred.type,
+                    id: base64ToArrayBuffer(cred.id)
+                }));
+            }
+
+            return processed;
+        }
+
+        document.getElementById('registerBtn').addEventListener('click', async function() {
+            try {
+                this.disabled = true;
+                this.textContent = '正在初始化...';
+
+                const response = await fetch('/fido_register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'username=' + encodeURIComponent(username)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || '初始化失败');
+                }
+
+                const options = await response.json();
+                console.log('Received options:', options);
+
+                // 处理选项，将 Base64 转换为 ArrayBuffer
+                const processedOptions = processCreationOptions(options);
+                console.log('Processed options:', processedOptions);
+
+                this.textContent = '请使用您的设备进行认证...';
+
+                const credential = await navigator.credentials.create(processedOptions);
+
+                if (!credential) {
+                    throw new Error('用户取消了操作');
+                }
+
+                this.textContent = '正在完成注册...';
+
+                const completeResponse = await fetch('/fido_complete_register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        id: arrayBufferToBase64(credential.rawId),
+                        response: {
+                            clientDataJSON: arrayBufferToBase64(credential.response.clientDataJSON),
+                            attestationObject: arrayBufferToBase64(credential.response.attestationObject)
+                        },
+                        type: credential.type
+                    })
+                });
+
+                if (completeResponse.ok) {
+                    document.getElementById('status').innerHTML = '<div class="success">✅ FIDO2 注册成功！</div>';
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    const error = await completeResponse.json();
+                    throw new Error(error.error || '注册完成失败');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('status').innerHTML = '<div class="error">❌ 错误: ' + error.message + '</div>';
+                this.disabled = false;
+                this.textContent = '开始 FIDO2 注册';
+            }
+        });
+    </script>
+</body>
+</html>
+

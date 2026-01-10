@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仪表板 - FIDO2 用户管理系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>🏠 仪表板</h1>
+                <div class="user-info">
+                    <span>👤 {{ username }}</span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-small">退出登录</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="welcome-card">
+                <h2>欢迎回来，{{ username }}！</h2>
+                <p>您已成功通过 FIDO2 认证。</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="card-icon">🔐</div>
+                    <h3>安全认证</h3>
+                    <p>您的账户已启用 FIDO2 无密码认证</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-icon">✅</div>
+                    <h3>认证状态</h3>
+                    <p>已认证</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-icon">📱</div>
+                    <h3>支持的设备</h3>
+                    <p>生物识别 / 硬件密钥</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>安全等级</h3>
+                    <p>高</p>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <h3>系统特性</h3>
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-icon">✓</span>
+                        <span>FIDO2 标准认证</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">✓</span>
+                        <span>生物识别支持（指纹、面部）</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">✓</span>
+                        <span>硬件安全密钥支持</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">✓</span>
+                        <span>无密码登录</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">✓</span>
+                        <span>高级安全防护</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h3>关于 FIDO2</h3>
+                <p>
+                    FIDO2 是一个开放的身份验证标准，由 FIDO 联盟开发。
+                    它提供了一种安全、易用的无密码认证方式，
+                    支持生物识别和硬件密钥等多种认证方式。
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
