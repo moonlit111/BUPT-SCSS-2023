@@ -26,35 +26,23 @@
 
 有些资料没有上传，欢迎添加我们联系方式随时交流。
 
-23网安学长：（wx）lhldudu
-
-23信安学长：（wx）ez-lbz
-
-### 持续更新中
-
-第6学期内容2026.6更新~
+23网安学长：lhldudu、23信安学长：ez-lbz
 
 ### 特别鸣谢
 
-在最后，我想特别感谢以下几位学长，他们无私分享的资料为我提供了巨大的帮助：
+XF：https://github.com/77feng/bupt_scss_course
 
-XF（2022级）：https://github.com/77feng/bupt_scss_course
+SQ：https://shenqi629.notion.site/
 
-SQ（2022级）：https://shenqi629.notion.site/
+ZYH：https://shuita2333.github.io/
 
-ZYH（2021级）：https://shuita2333.github.io/
+WD：https://pewter-tarsier-5b9.notion.site/1d826533399b4e44a8a513ddd63e881a
 
-WD（2021级）：https://pewter-tarsier-5b9.notion.site/1d826533399b4e44a8a513ddd63e881a
+HDW：https://github.com/fengchen555/BUPT-SCSS-learning-source
 
-HDW（2021级）：https://github.com/fengchen555/BUPT-SCSS-learning-source
+24级的同学们可以看同年级RCY的最新资料仓库哦～
 
-正是依靠这些前辈们整理的内容，我得以顺利度过学习中的许多难关，在此由衷感谢各位大佬们的付出。
-
-本仓库可以视作对往届资料的补充与更新，同时结合了我个人的学习笔记，希望能为大家提供更全面、更实用的参考，帮助大家在学习的道路上少走弯路。
-
-此外，2024级的同学们也可以关注同级同学 RCY 的最新资料仓库哦～
-
-RCY（2024级）：https://github.com/cyruan815/BUPT_SCSS_2024
+RCY：https://github.com/cyruan815/BUPT_SCSS_2024
 
 ### 总结
 
